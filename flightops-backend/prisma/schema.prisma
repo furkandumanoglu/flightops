@@ -1,0 +1,78 @@
+// 1. İstemci ve Veritabanı Bağlantısı
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// 2. Enum'lar (Sabit Değerler)
+enum Role {
+  ADMIN
+  OPERATOR
+}
+
+enum FlightStatus {
+  SCHEDULED
+  IN_AIR
+  LANDED
+  DELAYED
+  CANCELLED
+}
+
+enum TaskStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+}
+
+// 3. Modeller (Veritabanı Tabloları)
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  name      String
+  role      Role     @default(OPERATOR)
+  
+  // İlişki: Bir kullanıcının birden fazla görevi olabilir
+  tasks     MaintenanceTask[] 
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Flight {
+  id            String       @id @default(uuid())
+  flightNumber  String       @unique
+  origin        String
+  destination   String
+  status        FlightStatus @default(SCHEDULED)
+  departureTime DateTime
+  arrivalTime   DateTime
+  
+  // İlişki: Bir uçuşun birden fazla bakım/operasyon görevi olabilir
+  tasks         MaintenanceTask[]
+
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+}
+
+model MaintenanceTask {
+  id          String     @id @default(uuid())
+  title       String
+  description String?
+  status      TaskStatus @default(PENDING)
+  
+  // Uçuş ile İlişki (Foreign Key)
+  flightId    String
+  flight      Flight     @relation(fields: [flightId], references: [id])
+  
+  // Kullanıcı (Operatör) ile İlişki (Foreign Key)
+  assignedTo  String?
+  operator    User?      @relation(fields: [assignedTo], references: [id])
+
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+}
