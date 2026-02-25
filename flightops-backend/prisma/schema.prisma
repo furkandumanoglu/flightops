@@ -1,77 +1,88 @@
-// 1. İstemci ve Veritabanı Bağlantısı
+// FlightOps Core Schema
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
 generator client {
   provider = "prisma-client-js"
 }
 
-datasource db {
-  provider = "postgresql"
-}
-
-// 2. Enum'lar (Sabit Değerler)
-enum Role {
+enum UserRole {
   ADMIN
-  OPERATOR
+  INSTRUCTOR
+  STUDENT_PILOT
+  PILOT
 }
 
 enum FlightStatus {
   SCHEDULED
-  IN_AIR
-  LANDED
-  DELAYED
+  IN_PROGRESS
+  COMPLETED
   CANCELLED
 }
 
-enum TaskStatus {
-  PENDING
-  IN_PROGRESS
-  COMPLETED
-}
-
-// 3. Modeller (Veritabanı Tabloları)
 model User {
-  id        String   @id @default(uuid())
-  email     String   @unique
-  password  String
-  name      String
-  role      Role     @default(OPERATOR)
+  id            String         @id @default(uuid())
+  email         String         @unique
+  passwordHash  String
+  fullName      String
+  role          UserRole       @default(STUDENT_PILOT)
+  licenseNumber String?        @unique
   
-  // İlişki: Bir kullanıcının birden fazla görevi olabilir
-  tasks     MaintenanceTask[] 
-  
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  // Relations
+  flightsAsPilot      FlightSession[] @relation("PilotRelation")
+  flightsAsInstructor FlightSession[] @relation("InstructorRelation")
+
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  @@index([email, role])
 }
 
-model Flight {
-  id            String       @id @default(uuid())
-  flightNumber  String       @unique
-  origin        String
-  destination   String
-  status        FlightStatus @default(SCHEDULED)
-  departureTime DateTime
-  arrivalTime   DateTime
+model Aircraft {
+  id           String   @id @default(uuid())
+  tailNumber   String   @unique // Örn: TC-FRO
+  model        String   // Örn: Cessna 172SP
   
-  // İlişki: Bir uçuşun birden fazla bakım/operasyon görevi olabilir
-  tasks         MaintenanceTask[]
+  // Weight & Balance Limits (Temel Ağırlık Verileri)
+  emptyWeight  Float    // Basic Empty Weight (Temel Boş Ağırlık)
+  maxTakeOffWeight Float // MTOW (Maksimum Kalkış Ağırlığı)
+  fuelCapacity Float    // Litre veya Galon cinsinden
+  
+  flights      FlightSession[]
 
-  createdAt     DateTime     @default(now())
-  updatedAt     DateTime     @updatedAt
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 }
 
-model MaintenanceTask {
-  id          String     @id @default(uuid())
-  title       String
-  description String?
-  status      TaskStatus @default(PENDING)
+model FlightSession {
+  id              String       @id @default(uuid())
+  flightNumber    String       @unique
+  status          FlightStatus @default(SCHEDULED)
   
-  // Uçuş ile İlişki (Foreign Key)
-  flightId    String
-  flight      Flight     @relation(fields: [flightId], references: [id])
+  // Schedule Data
+  scheduledDeparture DateTime
+  scheduledArrival   DateTime
   
-  // Kullanıcı (Operatör) ile İlişki (Foreign Key)
-  assignedTo  String?
-  operator    User?      @relation(fields: [assignedTo], references: [id])
+  // Relations
+  aircraftId      String
+  aircraft        Aircraft     @relation(fields: [aircraftId], references: [id])
+  
+  pilotId         String
+  pilot           User         @relation("PilotRelation", fields: [pilotId], references: [id])
+  
+  instructorId    String?
+  instructor      User?        @relation("InstructorRelation", fields: [instructorId], references: [id])
 
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
+  // Weight & Balance Snapshots
+  takeOffWeight   Float?       // Hesaplanan kalkış ağırlığı
+  centerOfGravity Float?       // Center of Gravity (Ağırlık Merkezi - CG)
+
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+
+  @@index([scheduledDeparture, status])
 }
