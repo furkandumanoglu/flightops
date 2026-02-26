@@ -30,6 +30,7 @@ describe("AircraftService", () => {
         tailNumber: "TC-FRO",
         model: "Cessna 172SP",
         emptyWeight,
+        emptyWeightArm: 40,
         maxTakeOffWeight,
         fuelCapacity: 200,
         isActive: true,

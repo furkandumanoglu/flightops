@@ -2,7 +2,6 @@
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
 }
 
 generator client {
@@ -16,6 +15,16 @@ enum UserRole {
   PILOT
 }
 
+model AircraftStation {
+  id        String @id @default(uuid())
+  name      String // Örn: "Front Seats", "Rear Seats", "Fuel Tank", "Baggage"
+  arm       Float // Moment Kolu (Inches veya Meters)
+  maxWeight Float? // Bu istasyonun taşıyabileceği maksimum ağırlık limit
+
+  aircraftId String
+  aircraft   Aircraft @relation(fields: [aircraftId], references: [id])
+}
+
 enum FlightStatus {
   SCHEDULED
   IN_PROGRESS
@@ -24,65 +33,68 @@ enum FlightStatus {
 }
 
 model User {
-  id            String         @id @default(uuid())
-  email         String         @unique
+  id            String   @id @default(uuid())
+  email         String   @unique
   passwordHash  String
   fullName      String
-  role          UserRole       @default(STUDENT_PILOT)
-  licenseNumber String?        @unique
-  
+  role          UserRole @default(STUDENT_PILOT)
+  licenseNumber String?  @unique
+
   // Relations
   flightsAsPilot      FlightSession[] @relation("PilotRelation")
   flightsAsInstructor FlightSession[] @relation("InstructorRelation")
 
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([email, role])
 }
 
 model Aircraft {
-  id           String   @id @default(uuid())
-  tailNumber   String   @unique // Örn: TC-FRO
-  model        String   // Örn: Cessna 172SP
-  
-  // Weight & Balance Limits (Temel Ağırlık Verileri)
-  emptyWeight  Float    // Basic Empty Weight (Temel Boş Ağırlık)
-  maxTakeOffWeight Float // MTOW (Maksimum Kalkış Ağırlığı)
-  fuelCapacity Float    // Litre veya Galon cinsinden
-  
-  flights      FlightSession[]
+  id         String @id @default(uuid())
+  tailNumber String @unique // Örn: TC-FRO
+  model      String // Örn: Cessna 172SP
 
-  isActive     Boolean  @default(true)
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  // Weight & Balance Limits (Temel Ağırlık Verileri)
+  emptyWeight      Float // Basic Empty Weight (Temel Boş Ağırlık)
+  emptyWeightArm   Float // Boş Ağırlık Moment Kolu
+  maxTakeOffWeight Float // MTOW (Maksimum Kalkış Ağırlığı)
+  fuelCapacity     Float // Litre veya Galon cinsinden
+
+  // Relations
+  flights  FlightSession[]
+  stations AircraftStation[] // İstasyon bağlantımız
+
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model FlightSession {
-  id              String       @id @default(uuid())
-  flightNumber    String       @unique
-  status          FlightStatus @default(SCHEDULED)
-  
+  id           String       @id @default(uuid())
+  flightNumber String       @unique
+  status       FlightStatus @default(SCHEDULED)
+
   // Schedule Data
   scheduledDeparture DateTime
   scheduledArrival   DateTime
-  
+
   // Relations
-  aircraftId      String
-  aircraft        Aircraft     @relation(fields: [aircraftId], references: [id])
-  
-  pilotId         String
-  pilot           User         @relation("PilotRelation", fields: [pilotId], references: [id])
-  
-  instructorId    String?
-  instructor      User?        @relation("InstructorRelation", fields: [instructorId], references: [id])
+  aircraftId String
+  aircraft   Aircraft @relation(fields: [aircraftId], references: [id])
+
+  pilotId String
+  pilot   User   @relation("PilotRelation", fields: [pilotId], references: [id])
+
+  instructorId String?
+  instructor   User?   @relation("InstructorRelation", fields: [instructorId], references: [id])
 
   // Weight & Balance Snapshots
-  takeOffWeight   Float?       // Hesaplanan kalkış ağırlığı
-  centerOfGravity Float?       // Center of Gravity (Ağırlık Merkezi - CG)
+  takeOffWeight   Float? // Hesaplanan kalkış ağırlığı
+  centerOfGravity Float? // Center of Gravity (Ağırlık Merkezi - CG)
 
-  createdAt       DateTime     @default(now())
-  updatedAt       DateTime     @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([scheduledDeparture, status])
 }

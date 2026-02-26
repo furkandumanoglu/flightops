@@ -9,6 +9,7 @@ export const createAircraftSchema = z
     }),
     model: z.string().min(1, "model is required"),
     emptyWeight: z.number().positive("emptyWeight must be positive"),
+    emptyWeightArm: z.number().positive("emptyWeightArm must be positive"),
     maxTakeOffWeight: z.number().positive("maxTakeOffWeight must be positive"),
     fuelCapacity: z.number().nonnegative("fuelCapacity must be non-negative"),
     isActive: z.boolean().optional(),

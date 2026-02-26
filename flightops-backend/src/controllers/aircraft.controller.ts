@@ -12,7 +12,10 @@ export function createAircraftController(service: AircraftService) {
     ): Promise<void> {
       try {
         const parsed = createAircraftSchema.parse(req.body);
-        const aircraft = await service.createAircraft(parsed);
+        const aircraft = await service.createAircraft({
+          ...parsed,
+          isActive: parsed.isActive ?? true,
+        });
         res.status(StatusCodes.CREATED).json(aircraft);
       } catch (err) {
         next(err);
@@ -25,7 +28,8 @@ export function createAircraftController(service: AircraftService) {
       next: NextFunction
     ): Promise<void> {
       try {
-        const aircraft = await service.getAircraftById(req.params.id);
+        const id = req.params.id as string;
+        const aircraft = await service.getAircraftById(id);
         res.status(StatusCodes.OK).json(aircraft);
       } catch (err) {
         next(err);
@@ -47,7 +51,8 @@ export function createAircraftController(service: AircraftService) {
       next: NextFunction
     ): Promise<void> {
       try {
-        const aircraft = await service.updateAircraft(req.params.id, req.body);
+        const id = req.params.id as string;
+        const aircraft = await service.updateAircraft(id, req.body);
         res.status(StatusCodes.OK).json(aircraft);
       } catch (err) {
         next(err);
@@ -60,7 +65,8 @@ export function createAircraftController(service: AircraftService) {
       next: NextFunction
     ): Promise<void> {
       try {
-        await service.deleteAircraft(req.params.id);
+        const id = req.params.id as string;
+        await service.deleteAircraft(id);
         res.status(StatusCodes.NO_CONTENT).send();
       } catch (err) {
         next(err);
@@ -73,7 +79,8 @@ export function createAircraftController(service: AircraftService) {
       next: NextFunction
     ): Promise<void> {
       try {
-        const result = await service.calculateAvailablePayload(req.params.id);
+        const id = req.params.id as string;
+        const result = await service.calculateAvailablePayload(id);
         res.status(StatusCodes.OK).json(result);
       } catch (err) {
         next(err);

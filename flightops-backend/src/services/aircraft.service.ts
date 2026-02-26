@@ -1,9 +1,12 @@
-import type { PrismaClient, Aircraft } from "@prisma/client";
+import type { PrismaClient, Aircraft, AircraftStation } from "@prisma/client";
+
+export type AircraftWithStations = Aircraft & { stations: AircraftStation[] };
 
 export interface AircraftCreateInput {
   tailNumber: string;
   model: string;
   emptyWeight: number;
+  emptyWeightArm: number;
   maxTakeOffWeight: number;
   fuelCapacity: number;
   isActive?: boolean;
@@ -36,7 +39,17 @@ export class AircraftService {
   constructor(private readonly prisma: PrismaClient) {}
 
   async createAircraft(data: AircraftCreateInput): Promise<Aircraft> {
-    return this.prisma.aircraft.create({ data });
+    return this.prisma.aircraft.create({
+      data: {
+        tailNumber: data.tailNumber,
+        model: data.model,
+        emptyWeight: data.emptyWeight,
+        emptyWeightArm: data.emptyWeightArm,
+        maxTakeOffWeight: data.maxTakeOffWeight,
+        fuelCapacity: data.fuelCapacity,
+        isActive: data.isActive ?? true,
+      },
+    });
   }
 
   async getAircraftById(id: string): Promise<Aircraft> {
@@ -68,6 +81,20 @@ export class AircraftService {
     return this.prisma.aircraft.delete({
       where: { id },
     });
+  }
+
+  /**
+   * Fetches an aircraft with all its weight & balance stations.
+   */
+  async getAircraftPerformanceData(id: string): Promise<AircraftWithStations> {
+    const aircraft = await this.prisma.aircraft.findUnique({
+      where: { id },
+      include: { stations: true },
+    });
+    if (!aircraft) {
+      throw new RecordNotFoundError(`Aircraft with id '${id}' not found`);
+    }
+    return aircraft;
   }
 
   /**
