@@ -1,9 +1,13 @@
 import { Request, Response, NextFunction } from "express";
 import { StatusCodes } from "http-status-codes";
 import { AircraftService } from "../services/aircraft.service";
+import { WeightBalanceService } from "../services/wb.service";
 import { createAircraftSchema } from "../validations/aircraft.schema";
 
-export function createAircraftController(service: AircraftService) {
+export function createAircraftController(
+  service: AircraftService,
+  wbService: WeightBalanceService
+) {
   return {
     async create(
       req: Request,
@@ -81,6 +85,21 @@ export function createAircraftController(service: AircraftService) {
       try {
         const id = req.params.id as string;
         const result = await service.calculateAvailablePayload(id);
+        res.status(StatusCodes.OK).json(result);
+      } catch (err) {
+        next(err);
+      }
+    },
+
+    async calculateCG(
+      req: Request,
+      res: Response,
+      next: NextFunction
+    ): Promise<void> {
+      try {
+        const id = req.params.id as string;
+        const { loads } = req.body;
+        const result = await wbService.calculateCG(id, loads);
         res.status(StatusCodes.OK).json(result);
       } catch (err) {
         next(err);

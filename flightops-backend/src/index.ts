@@ -1,3 +1,4 @@
+import { createAuthRoutes } from "./routes/auth.routes";
 import express, { Request, Response } from "express";
 import cors from "cors";
 import helmet from "helmet";
@@ -8,8 +9,12 @@ import { PrismaClient } from "@prisma/client";
 import { Pool } from "pg";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { AircraftService } from "./services/aircraft.service";
+import { WeightBalanceService } from "./services/wb.service";
+import { AuthService } from "./services/auth.service";
 import { createAircraftRoutes } from "./routes/aircraft.routes";
 import { errorHandler } from "./middleware/error.middleware";
+
+
 
 dotenv.config({ path: path.join(__dirname, "..", "prisma/.env") });
 
@@ -21,12 +26,18 @@ const pool = new Pool({
 });
 const adapter = new PrismaPg(pool);
 const prisma = new PrismaClient({ adapter });
+const authService = new AuthService(prisma);
 const aircraftService = new AircraftService(prisma);
+const wbService = new WeightBalanceService(aircraftService);
 
-app.use(cors());
+app.use(cors({
+  origin: "http://localhost:5173",
+  credentials: true,
+}));
 app.use(helmet());
 app.use(morgan("dev"));
 app.use(express.json());
+app.use('/api/auth', createAuthRoutes(authService));
 
 app.get("/", (req: Request, res: Response) => {
   res.send("FlightOps API Works Correctly! ✈️");
@@ -42,7 +53,7 @@ app.get("/api/flights", async (req: Request, res: Response) => {
   }
 });
 
-app.use("/api/aircraft", createAircraftRoutes(aircraftService));
+app.use("/api/aircraft", createAircraftRoutes(aircraftService, wbService));
 
 app.use(errorHandler);
 

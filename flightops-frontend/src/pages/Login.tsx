@@ -17,11 +17,17 @@ const Login: React.FC = () => {
         setError('');
 
         try {
+            console.log("Attempting login for:", email);
             const response = await API_CLIENT.post('/auth/login', { email, password });
+            console.log("Login success, received token:", !!response.data.token);
+
             login(response.data.token);
+            console.log("Token saved, navigating to dashboard...");
             navigate('/dashboard');
         } catch (err: any) {
-            setError(err.response?.data?.message || 'Login failed. Please check your credentials.');
+            console.error("Login Error:", err);
+            const message = err.response?.data?.message || err.message || 'Login failed. Please check your credentials.';
+            setError(message);
         } finally {
             setIsLoading(false);
         }

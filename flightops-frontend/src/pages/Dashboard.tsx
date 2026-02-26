@@ -1,5 +1,6 @@
 import React from 'react';
 import { useAuth } from '../context/AuthContext';
+import WeightBalanceCalculator from '../components/WeightBalanceCalculator';
 
 const Dashboard: React.FC = () => {
     const { user, logout } = useAuth();
@@ -80,16 +81,9 @@ const Dashboard: React.FC = () => {
                     </div>
                 </div>
 
-                {/* Placeholder for Weight & Balance Implementation */}
-                <section className="mt-12 bg-slate-950 border border-slate-800 border-dashed rounded-3xl p-12 text-center">
-                    <div className="max-w-md mx-auto">
-                        <div className="text-4xl mb-4 opacity-50">🚧</div>
-                        <h4 className="text-xl font-bold text-white mb-2">W&B System Coming Soon</h4>
-                        <p className="text-slate-500 text-sm">
-                            We are currently finalizing the W&B calculation engine. This module will allow precise loading and CG verification for Cessna and Piper aircraft.
-                        </p>
-                    </div>
-                </section>
+                <div className="mt-12">
+                    <WeightBalanceCalculator />
+                </div>
             </main>
         </div>
     );
