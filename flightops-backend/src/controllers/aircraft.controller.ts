@@ -33,7 +33,7 @@ export function createAircraftController(
     ): Promise<void> {
       try {
         const id = req.params.id as string;
-        const aircraft = await service.getAircraftById(id);
+        const aircraft = await service.getAircraftPerformanceData(id);
         res.status(StatusCodes.OK).json(aircraft);
       } catch (err) {
         next(err);

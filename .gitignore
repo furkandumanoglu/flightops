@@ -7,3 +7,5 @@ flightops-backend/prisma/.env
 
 # Backend Docker Compose (local only)
 flightops-backend/docker-compose.yml
+
+.DS_Store

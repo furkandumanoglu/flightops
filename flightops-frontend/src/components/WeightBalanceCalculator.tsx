@@ -101,7 +101,7 @@ const WeightBalanceCalculator: React.FC = () => {
                             type="text"
                             value={aircraftId}
                             onChange={(e) => setAircraftId(e.target.value)}
-                            placeholder="e.g. 550e8400-e29b-41d4-a716-446655440000"
+                            placeholder="e.g. a9fe76b1-3b2a-4a30-9868-2b8ef24a4822"
                             className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all placeholder:text-slate-700"
                             required
                         />
@@ -154,8 +154,8 @@ const WeightBalanceCalculator: React.FC = () => {
                         type="submit"
                         disabled={calculating || !aircraft}
                         className={`w-full py-4 rounded-xl font-black text-sm uppercase tracking-widest transition-all ${calculating || !aircraft
-                                ? 'bg-slate-800 text-slate-600 cursor-not-allowed'
-                                : 'bg-blue-600 hover:bg-blue-500 text-white shadow-lg shadow-blue-500/20 hover:scale-[1.01] active:scale-[0.99]'
+                            ? 'bg-slate-800 text-slate-600 cursor-not-allowed'
+                            : 'bg-blue-600 hover:bg-blue-500 text-white shadow-lg shadow-blue-500/20 hover:scale-[1.01] active:scale-[0.99]'
                             }`}
                     >
                         {calculating ? (
