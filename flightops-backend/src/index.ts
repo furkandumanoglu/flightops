@@ -12,6 +12,8 @@ import { AircraftService } from "./services/aircraft.service";
 import { WeightBalanceService } from "./services/wb.service";
 import { AuthService } from "./services/auth.service";
 import { createAircraftRoutes } from "./routes/aircraft.routes";
+import { FlightService } from "./services/flight.service";
+import { createFlightRoutes } from "./routes/flight.routes";
 import { errorHandler } from "./middleware/error.middleware";
 
 
@@ -29,6 +31,7 @@ const prisma = new PrismaClient({ adapter });
 const authService = new AuthService(prisma);
 const aircraftService = new AircraftService(prisma);
 const wbService = new WeightBalanceService(aircraftService);
+const flightService = new FlightService(prisma);
 
 app.use(cors({
   origin: "http://localhost:5173",
@@ -43,21 +46,15 @@ app.get("/", (req: Request, res: Response) => {
   res.send("FlightOps API Works Correctly! ✈️");
 });
 
-app.get("/api/flights", async (req: Request, res: Response) => {
-  try {
-    const flights = await (prisma as unknown as { flightSession: { findMany: () => Promise<unknown[]> } }).flightSession.findMany();
-    res.json(flights);
-  } catch (error) {
-    console.error("Error fetching flights:", error);
-    res.status(500).json({ error: "Internal server error" });
-  }
-});
-
 app.use("/api/aircraft", createAircraftRoutes(aircraftService, wbService));
+app.use("/api/flights", createFlightRoutes(flightService));
 
 app.use(errorHandler);
 
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
 });
+
+// Keep process alive
+setInterval(() => { }, 1000 * 60 * 60);
 

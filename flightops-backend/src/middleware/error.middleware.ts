@@ -11,18 +11,23 @@ export function errorHandler(
   _next: NextFunction
 ): void {
   if (err instanceof RecordNotFoundError) {
-    res.status(StatusCodes.NOT_FOUND).json({ error: err.message });
+    res.status(StatusCodes.NOT_FOUND).json({ message: err.message });
     return;
   }
 
   if (err instanceof UnauthorizedError) {
-    res.status(StatusCodes.UNAUTHORIZED).json({ error: err.message });
+    res.status(StatusCodes.UNAUTHORIZED).json({ message: err.message });
+    return;
+  }
+
+  if (err.name === "BadRequestError") {
+    res.status(StatusCodes.BAD_REQUEST).json({ message: err.message });
     return;
   }
 
   if (err instanceof ZodError) {
     res.status(StatusCodes.BAD_REQUEST).json({
-      error: "Validation failed",
+      message: "Validation failed",
       details: err.flatten().fieldErrors,
     });
     return;
@@ -31,5 +36,5 @@ export function errorHandler(
   console.error("Unhandled error:", err);
   res
     .status(StatusCodes.INTERNAL_SERVER_ERROR)
-    .json({ error: "Internal server error" });
+    .json({ message: "Internal server error" });
 }

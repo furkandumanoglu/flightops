@@ -1,6 +1,8 @@
 import React from 'react';
 import { useAuth } from '../context/AuthContext';
 import WeightBalanceCalculator from '../components/WeightBalanceCalculator';
+import FlightList from '../components/FlightList';
+import ScheduleFlightForm from '../components/ScheduleFlightForm';
 
 const Dashboard: React.FC = () => {
     const { user, logout } = useAuth();
@@ -81,8 +83,14 @@ const Dashboard: React.FC = () => {
                     </div>
                 </div>
 
-                <div className="mt-12">
-                    <WeightBalanceCalculator />
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-12 items-start">
+                    <div className="space-y-8">
+                        <WeightBalanceCalculator />
+                        <ScheduleFlightForm />
+                    </div>
+                    <div className="h-full">
+                        <FlightList />
+                    </div>
                 </div>
             </main>
         </div>

@@ -33,6 +33,26 @@ async function main() {
     });
 
     console.log(`Seeded user: ${user.email}`);
+    console.log(`ADMIN_UUID=${user.id}`);
+
+    // 1.1 Seed Instructor User
+    const instructorEmail = "instructor@flightops.com";
+    const instructorPassword = "password123";
+    const instructorHashedPassword = await bcrypt.hash(instructorPassword, 10);
+
+    const instructor = await prisma.user.upsert({
+        where: { email: instructorEmail },
+        update: {},
+        create: {
+            email: instructorEmail,
+            passwordHash: instructorHashedPassword,
+            fullName: "Captain Jack Sparrow",
+            role: "INSTRUCTOR",
+        },
+    });
+
+    console.log(`Seeded instructor: ${instructor.email}`);
+    console.log(`INSTRUCTOR_UUID=${instructor.id}`);
 
     // 2. Seed Cessna 172 Aircraft
     const aircraft = await prisma.aircraft.upsert({
@@ -84,8 +104,10 @@ async function main() {
         console.log(`Seeded station: ${station.name} for ${aircraft.tailNumber}`);
     }
 
-    console.log(`\nIMPORTANT: Take note of the Aircraft UUID for integration:`);
+    console.log(`\nIMPORTANT: Take note of the UUIDs for integration:`);
     console.log(`AIRCRAFT_UUID=${aircraft.id}`);
+    console.log(`INSTRUCTOR_UUID=${instructor.id}`);
+    console.log(`ADMIN_UUID=${user.id}`);
 }
 
 main()
