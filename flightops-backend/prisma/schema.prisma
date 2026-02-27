@@ -15,6 +15,12 @@ enum UserRole {
   PILOT
 }
 
+enum AircraftStatus {
+  READY
+  MAINTENANCE
+  GROUNDED
+}
+
 model AircraftStation {
   id        String @id @default(uuid())
   name      String // Örn: "Front Seats", "Rear Seats", "Fuel Tank", "Baggage"
@@ -66,6 +72,8 @@ model Aircraft {
   stations AircraftStation[] // İstasyon bağlantımız
 
   isActive  Boolean  @default(true)
+  status    AircraftStatus @default(READY)
+  nextMaintenanceHours Int @default(50)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }

@@ -48,7 +48,7 @@ const ScheduleFlightForm: React.FC<ScheduleFlightFormProps> = ({ onSuccess }) =>
     };
 
     return (
-        <div className="bg-slate-900 border border-slate-800 rounded-3xl overflow-hidden shadow-2xl h-full">
+        <div className="bg-slate-900/40 backdrop-blur-xl border border-white/5 rounded-[2.5rem] overflow-hidden shadow-2xl h-full">
             <div className="p-8">
                 <header className="mb-8">
                     <h3 className="text-xl font-black text-white flex items-center gap-2">

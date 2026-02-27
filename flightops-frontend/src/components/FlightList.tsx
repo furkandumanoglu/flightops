@@ -36,7 +36,7 @@ const FlightList: React.FC = () => {
     if (loading) return <div className="text-slate-400 animate-pulse text-sm">Loading schedules...</div>;
 
     return (
-        <div className="bg-slate-900 border border-slate-800 rounded-3xl overflow-hidden shadow-2xl h-full">
+        <div className="bg-slate-900/40 backdrop-blur-xl border border-white/5 rounded-[2.5rem] overflow-hidden shadow-2xl h-full">
             <div className="p-8">
                 <header className="mb-6 flex justify-between items-center">
                     <div>
@@ -79,8 +79,8 @@ const FlightList: React.FC = () => {
                                         <h4 className="text-white font-bold">{flight.aircraft.tailNumber}</h4>
                                     </div>
                                     <span className={`text-[10px] px-2 py-0.5 rounded-full font-black uppercase tracking-widest ${flight.status === 'SCHEDULED' ? 'bg-blue-500/20 text-blue-400' :
-                                            flight.status === 'IN_PROGRESS' ? 'bg-amber-500/20 text-amber-400' :
-                                                'bg-slate-800 text-slate-500'
+                                        flight.status === 'IN_PROGRESS' ? 'bg-amber-500/20 text-amber-400' :
+                                            'bg-slate-800 text-slate-500'
                                         }`}>
                                         {flight.status}
                                     </span>

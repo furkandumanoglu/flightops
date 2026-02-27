@@ -36,6 +36,11 @@ export class FlightService {
             throw new RecordNotFoundError(`Aircraft with id '${data.aircraftId}' not found`);
         }
 
+        // 1.0 Check Airworthiness
+        if (aircraft.status !== 'READY') {
+            throw new BadRequestError(`Aircraft is not airworthy (Status: ${aircraft.status})`);
+        }
+
         // 1.1 Check if instructor exists and has the correct role
         if (data.instructorId) {
             const instructor = await this.prisma.user.findUnique({

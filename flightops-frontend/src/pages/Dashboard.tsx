@@ -1,97 +1,155 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import WeightBalanceCalculator from '../components/WeightBalanceCalculator';
 import FlightList from '../components/FlightList';
 import ScheduleFlightForm from '../components/ScheduleFlightForm';
+import FleetStatus from '../components/FleetStatus';
+import WeatherWidget from '../components/WeatherWidget';
 
 const Dashboard: React.FC = () => {
     const { user, logout } = useAuth();
 
+    // State-driven UI toggles
+    const [openModule, setOpenModule] = useState<string | null>(null);
+
+    const toggleModule = (moduleName: string) => {
+        setOpenModule(openModule === moduleName ? null : moduleName);
+    };
+
+    const modules = [
+        {
+            id: 'scheduling',
+            title: 'Schedule & Missions',
+            icon: '🗓️',
+            description: 'Coordinate training flights, assignments, and mission logs.',
+            color: 'emerald',
+            secondaryIcon: '📅'
+        },
+        {
+            id: 'wb',
+            title: 'Weight & Balance',
+            icon: '⚖️',
+            description: 'Precision calculation for takeoff performance and safety.',
+            color: 'indigo',
+            secondaryIcon: '🎯'
+        },
+        {
+            id: 'fleet',
+            title: 'Fleet Readiness',
+            icon: '✈️',
+            description: 'Monitor airworthiness, maintenance, and fleet status.',
+            color: 'amber',
+            secondaryIcon: '🛡️'
+        }
+    ];
+
     return (
-        <div className="min-h-screen bg-slate-950 text-slate-200">
-            {/* Sidebar / Navigation Placeholder */}
-            <nav className="border-b border-slate-800 bg-slate-900/50 backdrop-blur-md sticky top-0 z-10">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="flex justify-between h-16 items-center">
-                        <div className="flex items-center gap-2">
-                            <span className="text-2xl">✈️</span>
-                            <span className="text-xl font-bold text-white tracking-tight">FlightOps</span>
+        <div className="min-h-screen bg-[#020617] text-slate-200 selection:bg-indigo-500/30">
+            <WeatherWidget />
+
+            {/* Main Navigation */}
+            <nav className="bg-slate-900/20 backdrop-blur-md border-b border-white/5 sticky top-[53px] z-40">
+                <div className="max-w-7xl mx-auto px-6 h-20 flex justify-between items-center">
+                    <div className="flex items-center gap-3">
+                        <div className="h-10 w-10 bg-indigo-600 rounded-xl flex items-center justify-center text-xl shadow-[0_0_20px_rgba(79,70,229,0.4)]">
+                            ⚙️
                         </div>
-                        <div className="flex items-center gap-6">
-                            <div className="hidden md:block text-right">
-                                <p className="text-sm font-bold text-white leading-none">{user?.fullName || 'Pilot'}</p>
-                                <p className="text-xs text-slate-500 uppercase tracking-widest mt-1">{user?.role || 'Flight Crew'}</p>
+                        <div>
+                            <span className="text-xl font-black text-white tracking-tighter uppercase italic">FlightOps</span>
+                            <div className="flex items-center gap-2 -mt-1">
+                                <span className="h-1.5 w-1.5 bg-emerald-500 rounded-full animate-pulse"></span>
+                                <span className="text-[10px] text-slate-500 font-black tracking-widest uppercase">System Linked</span>
                             </div>
-                            <button
-                                onClick={logout}
-                                className="bg-slate-800 hover:bg-red-900/40 hover:text-red-400 text-slate-300 px-4 py-2 rounded-lg text-sm font-semibold transition-all border border-slate-700 hover:border-red-500/30"
-                            >
-                                Logout
-                            </button>
                         </div>
+                    </div>
+
+                    <div className="flex items-center gap-8">
+                        <div className="text-right hidden sm:block">
+                            <p className="text-sm font-black text-white leading-none tracking-tight">{user?.fullName || 'COMMANDER'}</p>
+                            <p className="text-[10px] text-indigo-500 font-bold uppercase tracking-[0.2em] mt-1">{user?.role || 'PILOT'}</p>
+                        </div>
+                        <button
+                            onClick={logout}
+                            className="bg-white/5 hover:bg-red-500/10 hover:text-red-400 text-slate-400 px-5 py-2.5 rounded-xl text-xs font-black transition-all border border-white/5 hover:border-red-500/30 uppercase tracking-widest"
+                        >
+                            Log Off
+                        </button>
                     </div>
                 </div>
             </nav>
 
-            <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-                <header className="mb-10">
-                    <h2 className="text-3xl font-black text-white">Dashboard Overview</h2>
-                    <p className="text-slate-400 mt-1">Welcome back, Captain. Systems are nominal.</p>
+            <main className="max-w-7xl mx-auto px-6 py-12">
+                <header className="mb-12">
+                    <h2 className="text-4xl font-black text-white tracking-tighter uppercase italic">Mission Control</h2>
+                    <p className="text-slate-500 mt-2 font-medium tracking-wide">Operational units synchronized. Select a mission module below.</p>
                 </header>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {/* Weight & Balance Card */}
-                    <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 hover:border-blue-500/50 transition-all cursor-pointer group">
-                        <div className="h-12 w-12 bg-blue-500/10 rounded-xl flex items-center justify-center text-2xl mb-4 group-hover:bg-blue-500/20 transition-all">
-                            ⚖️
-                        </div>
-                        <h3 className="text-lg font-bold text-white mb-2">Weight & Balance</h3>
-                        <p className="text-slate-400 text-sm leading-relaxed mb-4">
-                            Calculate takeoff weights, center of gravity, and performance data for your aircraft.
-                        </p>
-                        <div className="inline-flex items-center text-blue-400 text-sm font-bold gap-2">
-                            Launch Calculator <span className="text-xs">→</span>
-                        </div>
-                    </div>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+                    {modules.map((mod) => (
+                        <button
+                            key={mod.id}
+                            onClick={() => toggleModule(mod.id)}
+                            className={`group relative overflow-hidden rounded-[2.5rem] border p-8 text-left transition-all duration-500 
+                                ${openModule === mod.id
+                                    ? `bg-${mod.color}-500/10 border-${mod.color}-500/50 ring-4 ring-${mod.color}-500/10`
+                                    : 'bg-slate-900/30 border-white/5 hover:border-white/20'}`}
+                        >
+                            <div className={`absolute -right-4 -top-4 text-8xl opacity-[0.03] transition-transform duration-700 group-hover:scale-125 group-hover:rotate-12`}>
+                                {mod.secondaryIcon}
+                            </div>
 
-                    {/* Recent Flights Card */}
-                    <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 hover:border-blue-500/50 transition-all cursor-pointer group">
-                        <div className="h-12 w-12 bg-emerald-500/10 rounded-xl flex items-center justify-center text-2xl mb-4 group-hover:bg-emerald-500/20 transition-all">
-                            📅
-                        </div>
-                        <h3 className="text-lg font-bold text-white mb-2">Flight Schedule</h3>
-                        <p className="text-slate-400 text-sm leading-relaxed mb-4">
-                            View upcoming training flights, aircraft availability, and instructor assignments.
-                        </p>
-                        <div className="inline-flex items-center text-emerald-400 text-sm font-bold gap-2">
-                            View Calendar <span className="text-xs">→</span>
-                        </div>
-                    </div>
+                            <div className={`h-16 w-16 rounded-[1.5rem] flex items-center justify-center text-3xl mb-6 shadow-2xl transition-all duration-500 group-hover:scale-110
+                                ${openModule === mod.id
+                                    ? `bg-${mod.color}-500 text-white`
+                                    : 'bg-slate-800 text-slate-400 group-hover:bg-slate-700'}`}>
+                                {mod.icon}
+                            </div>
 
-                    {/* Maintenance Card */}
-                    <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 hover:border-blue-500/50 transition-all cursor-pointer group">
-                        <div className="h-12 w-12 bg-amber-500/10 rounded-xl flex items-center justify-center text-2xl mb-4 group-hover:bg-amber-500/20 transition-all">
-                            🛠️
-                        </div>
-                        <h3 className="text-lg font-bold text-white mb-2">Fleet Status</h3>
-                        <p className="text-slate-400 text-sm leading-relaxed mb-4">
-                            Real-time maintenance logs and airworthiness status for the school's fleet.
-                        </p>
-                        <div className="inline-flex items-center text-amber-400 text-sm font-bold gap-2">
-                            Check Readiness <span className="text-xs">→</span>
-                        </div>
-                    </div>
+                            <h3 className="text-xl font-black text-white mb-3 tracking-tight group-hover:text-indigo-400 transition-colors uppercase italic">{mod.title}</h3>
+                            <p className="text-slate-500 text-sm leading-relaxed font-medium">
+                                {mod.description}
+                            </p>
+
+                            <div className="mt-6 flex items-center gap-2">
+                                <span className={`text-[10px] font-black uppercase tracking-widest transition-all
+                                    ${openModule === mod.id ? `text-${mod.color}-400` : 'text-slate-600 group-hover:text-slate-400'}`}>
+                                    {openModule === mod.id ? 'System Active' : 'Initialize Command'}
+                                </span>
+                                <div className={`h-1 w-1 rounded-full ${openModule === mod.id ? `bg-${mod.color}-400 animate-pulse` : 'bg-slate-800'}`}></div>
+                            </div>
+                        </button>
+                    ))}
                 </div>
 
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-12 items-start">
-                    <div className="space-y-8">
-                        <WeightBalanceCalculator />
-                        <ScheduleFlightForm />
-                    </div>
-                    <div className="h-full">
-                        <FlightList />
-                    </div>
+                {/* Modular Display Areas */}
+                <div className="space-y-12">
+                    {openModule === 'scheduling' && (
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 animate-in fade-in slide-in-from-bottom-8 duration-500">
+                            <ScheduleFlightForm />
+                            <FlightList />
+                        </div>
+                    )}
+
+                    {openModule === 'wb' && (
+                        <div className="max-w-4xl mx-auto animate-in fade-in zoom-in-95 duration-500">
+                            <WeightBalanceCalculator />
+                        </div>
+                    )}
+
+                    {openModule === 'fleet' && (
+                        <div className="max-w-4xl mx-auto animate-in fade-in slide-in-from-right-8 duration-500">
+                            <FleetStatus />
+                        </div>
+                    )}
                 </div>
+
+                {!openModule && (
+                    <div className="flex flex-col items-center justify-center py-24 text-center opacity-30 select-none">
+                        <div className="text-6xl mb-6 grayscale">🛡️</div>
+                        <h3 className="text-lg font-black tracking-widest uppercase mb-2">Systems Standby</h3>
+                        <p className="text-sm font-bold max-w-xs uppercase tracking-tighter">Await command initialization via modular interface</p>
+                    </div>
+                )}
             </main>
         </div>
     );
