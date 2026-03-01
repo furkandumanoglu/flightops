@@ -40,10 +40,12 @@ async function main() {
     const instructorPassword = "password123";
     const instructorHashedPassword = await bcrypt.hash(instructorPassword, 10);
 
-    const instructor = await prisma.user.upsert({
-        where: { email: instructorEmail },
-        update: {},
-        create: {
+    // Delete existing to ensure the ID is updated if it already exists
+    await prisma.user.deleteMany({ where: { email: instructorEmail } });
+
+    const instructor = await prisma.user.create({
+        data: {
+            id: "7c9e6679-7425-40de-944b-617a22676767",
             email: instructorEmail,
             passwordHash: instructorHashedPassword,
             fullName: "Captain Jack Sparrow",

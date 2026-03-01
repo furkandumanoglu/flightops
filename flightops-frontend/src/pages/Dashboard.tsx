@@ -5,12 +5,14 @@ import FlightList from '../components/FlightList';
 import ScheduleFlightForm from '../components/ScheduleFlightForm';
 import FleetStatus from '../components/FleetStatus';
 import WeatherWidget from '../components/WeatherWidget';
+import DemoInfoPanel from '../components/DemoInfoPanel';
 
 const Dashboard: React.FC = () => {
     const { user, logout } = useAuth();
 
     // State-driven UI toggles
     const [openModule, setOpenModule] = useState<string | null>(null);
+    const [isDemoPanelOpen, setIsDemoPanelOpen] = useState(false);
 
     const toggleModule = (moduleName: string) => {
         setOpenModule(openModule === moduleName ? null : moduleName);
@@ -151,6 +153,24 @@ const Dashboard: React.FC = () => {
                     </div>
                 )}
             </main>
+
+            {/* Demo Toolkit Trigger */}
+            <button
+                onClick={() => setIsDemoPanelOpen(true)}
+                className="fixed bottom-8 right-8 h-16 w-16 bg-emerald-500 rounded-2xl shadow-[0_0_30px_rgba(16,185,129,0.4)] flex items-center justify-center text-2xl hover:scale-110 active:scale-95 transition-all z-50 group border border-emerald-400/50"
+                title="Open Demo Toolkit"
+            >
+                <span className="group-hover:rotate-12 transition-transform">🔑</span>
+                <span className="absolute -top-1 -right-1 flex h-4 w-4">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-4 w-4 bg-emerald-500 border-2 border-[#020617]"></span>
+                </span>
+            </button>
+
+            <DemoInfoPanel
+                isOpen={isDemoPanelOpen}
+                onClose={() => setIsDemoPanelOpen(false)}
+            />
         </div>
     );
 };

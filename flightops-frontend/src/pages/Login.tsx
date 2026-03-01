@@ -83,6 +83,52 @@ const Login: React.FC = () => {
                     </button>
                 </form>
 
+                <div className="mt-8 pt-8 border-t border-slate-800">
+                    <div className="bg-emerald-500/5 backdrop-blur-xl border border-emerald-500/20 rounded-2xl p-5 relative overflow-hidden group">
+                        <div className="absolute top-0 right-0 p-3 opacity-20">
+                            <span className="text-2xl">🔑</span>
+                        </div>
+                        <h4 className="text-emerald-400 text-xs font-black uppercase tracking-widest mb-4 flex items-center gap-2">
+                            <span className="h-1.5 w-1.5 bg-emerald-500 rounded-full animate-pulse"></span>
+                            Demo Credentials
+                        </h4>
+
+                        <div className="space-y-3">
+                            <div className="flex items-center justify-between group/item">
+                                <div>
+                                    <p className="text-[10px] text-slate-500 font-bold uppercase tracking-tight">Email</p>
+                                    <p className="text-sm text-slate-300 font-mono">admin@example.com</p>
+                                </div>
+                                <button
+                                    onClick={() => {
+                                        navigator.clipboard.writeText('admin@example.com');
+                                    }}
+                                    className="p-2 hover:bg-emerald-500/10 rounded-lg text-emerald-500/50 hover:text-emerald-400 transition-colors"
+                                    title="Copy Email"
+                                >
+                                    <span className="text-sm">📋</span>
+                                </button>
+                            </div>
+
+                            <div className="flex items-center justify-between group/item">
+                                <div>
+                                    <p className="text-[10px] text-slate-500 font-bold uppercase tracking-tight">Password</p>
+                                    <p className="text-sm text-slate-300 font-mono">password123</p>
+                                </div>
+                                <button
+                                    onClick={() => {
+                                        navigator.clipboard.writeText('password123');
+                                    }}
+                                    className="p-2 hover:bg-emerald-500/10 rounded-lg text-emerald-500/50 hover:text-emerald-400 transition-colors"
+                                    title="Copy Password"
+                                >
+                                    <span className="text-sm">📋</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <div className="mt-8 text-center text-slate-500 text-xs">
                     Secure biometric encryption enabled by default.
                 </div>
