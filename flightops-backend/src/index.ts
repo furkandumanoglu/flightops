@@ -21,7 +21,7 @@ import { errorHandler } from "./middleware/error.middleware";
 dotenv.config({ path: path.join(__dirname, "..", "prisma/.env") });
 
 const app = express();
-const port = process.env.PORT || 3000;
+const PORT = Number(process.env.PORT) || 3000;
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
@@ -51,8 +51,9 @@ app.use("/api/flights", createFlightRoutes(flightService));
 
 app.use(errorHandler);
 
-app.listen(port, () => {
-  console.log(`Server is running on http://localhost:${port}`);
+console.log('Attempting to start server...');
+app.listen(PORT, '0.0.0.0', () => {
+  console.log('Server is running on port ' + PORT);
 });
 
 // Keep process alive
