@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const API_CLIENT = axios.create({
-  baseURL: 'http://localhost:3000/api',
+  baseURL: `${import.meta.env.VITE_API_URL}/api`,
   withCredentials: true, // Matching backend CORS config
   headers: {
     'Content-Type': 'application/json',
