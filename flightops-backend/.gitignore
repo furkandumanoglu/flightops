@@ -1,0 +1,11 @@
+node_modules/
+dist/
+.env
+prisma/.env
+*.log
+.DS_Store
+# Backend Environment Variables
+flightops-backend/prisma/.env
+
+# Backend Docker Compose (local only)
+flightops-backend/docker-compose.yml

@@ -2,7 +2,11 @@ import { PrismaClient, UserRole } from "@prisma/client";
 import * as bcrypt from "bcryptjs";
 import * as jwt from "jsonwebtoken";
 
-const JWT_SECRET = process.env.JWT_SECRET || 'flightops-secret-key';
+const JWT_SECRET = process.env.JWT_SECRET;
+
+if (!JWT_SECRET) {
+    throw new Error("JWT_SECRET is not defined in environment variables");
+}
 
 export class UnauthorizedError extends Error {
     constructor(message = "Unauthorized") {
@@ -49,7 +53,7 @@ export class AuthService {
 
         const token = jwt.sign(
             { id: user.id, email: user.email, role: user.role, fullName: user.fullName },
-            JWT_SECRET,
+            JWT_SECRET as string,
             { expiresIn: "1d" }
         );
 

@@ -2,7 +2,11 @@ import { Request, Response, NextFunction } from "express";
 import * as jwt from "jsonwebtoken";
 import { UnauthorizedError } from "../services/auth.service";
 
-const JWT_SECRET = process.env.JWT_SECRET || 'flightops-secret-key';
+const JWT_SECRET = process.env.JWT_SECRET;
+
+if (!JWT_SECRET) {
+    throw new Error("JWT_SECRET is not defined in environment variables");
+}
 
 export interface AuthRequest extends Request {
     user?: {
