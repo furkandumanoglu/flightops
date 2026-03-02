@@ -34,7 +34,7 @@ const wbService = new WeightBalanceService(aircraftService);
 const flightService = new FlightService(prisma);
 
 app.use(cors({
-  origin: "http://localhost:5173",
+  origin: ["http://localhost:5173", "https://flightoperations.netlify.app"],
   credentials: true,
 }));
 app.use(helmet());
