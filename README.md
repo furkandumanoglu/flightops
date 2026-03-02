@@ -75,7 +75,7 @@ Use these pre-seeded credentials:
 
 1.  **Clone the repository:**
     ```bash
-    git clone [https://github.com/KULLANICI-ADIN/flightops.git](https://github.com/KULLANICI-ADIN/flightops.git)
+    git clone [https://github.com/furkandumanoglu/flightops.git]
     ```
 
 2.  **Backend Setup:**
