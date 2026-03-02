@@ -1,1 +1,0 @@
-{"version":3,"file":"aircraft.routes.d.ts","sourceRoot":"","sources":["aircraft.routes.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,MAAM,EAAE,MAAM,SAAS,CAAC;AACjC,OAAO,KAAK,EAAE,eAAe,EAAE,MAAM,8BAA8B,CAAC;AACpE,OAAO,KAAK,EAAE,oBAAoB,EAAE,MAAM,wBAAwB,CAAC;AAGnE,wBAAgB,oBAAoB,CAClC,OAAO,EAAE,eAAe,EACxB,SAAS,EAAE,oBAAoB,GAC9B,MAAM,CAaR"}
