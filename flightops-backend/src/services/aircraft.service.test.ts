@@ -33,6 +33,8 @@ describe("AircraftService", () => {
         emptyWeightArm: 40,
         maxTakeOffWeight,
         fuelCapacity: 200,
+        status: "READY",
+        nextMaintenanceHours: 50,
         isActive: true,
         createdAt: new Date(),
         updatedAt: new Date(),

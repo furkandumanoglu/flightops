@@ -33,6 +33,8 @@ describe("WeightBalanceService", () => {
         emptyWeightArm: 40.0,
         maxTakeOffWeight: 2550,
         fuelCapacity: 200,
+        status: "READY",
+        nextMaintenanceHours: 50,
         isActive: true,
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -76,6 +78,8 @@ describe("WeightBalanceService", () => {
         id: aircraftId,
         emptyWeight: 1000,
         emptyWeightArm: 40,
+        status: "READY",
+        nextMaintenanceHours: 50,
         stations: [{ id: stationId, name: "Seat", arm: 37, maxWeight: null, aircraftId }],
       });
 

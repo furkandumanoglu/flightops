@@ -21,7 +21,7 @@ import { errorHandler } from "./middleware/error.middleware";
 dotenv.config({ path: path.join(__dirname, "..", "prisma/.env") });
 
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
